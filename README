@@ -1,0 +1,58 @@
+NAME
+    Finance::FITF - Fast Intraday Transaction Format
+
+SYNOPSIS
+      use Finance::FITF;
+
+      my $day = Finance::FITF->new_from_file('XTAF.TX-2010-11-19.fitf');
+      $day->header->{start}[0]; # start of the first session
+      $day->header->{end}[0];   # end of the first session
+
+      $day->header->{bar_seconds}; # number of seconds per bar
+
+      # last bar in the file. you can get open/high/low/close/volume from $bar
+      my $bar = $day->bar_at($day->header->{end}[0]);
+
+      # run the ticks in the last bar with the given callback
+      $day->run_ticks($bar->{index}, $bar->{index}+$bar->{ticks}-1,
+                      sub { my ($time, $price, $volume) = @_; });
+
+DESCRIPTION
+    Finance::FITF provides access to the FITF format, an efficient storage
+    format for intraday trading records.
+
+FORMAT
+    The FITF format consists 3 parts:
+
+    header
+        The header defines the name, date, and sessions of the transactions
+        that the file is describing.
+
+    bars
+        The number of bars in the file is determined by the total seconds in
+        the sessions defined in the header, divided by "bar_seconds" defined
+        in the header. The first bar denotes trading transaction between the
+        start of the session, until and excluding "bar_seconds" past the
+        start of the session.
+
+        Each bar contains the "open", "high", "low", and "close" prices
+        information of the given period, as well as "volume" and "ticks".
+
+        The "index" field points to the start of the tick records of the
+        period of the current bar.
+
+    ticks
+        The number of ticks in the file is determined by the "records" field
+        in the header. Each record contains "price" and "volume" for the
+        transaction. The time of the transaction is determined by
+        "offset_min" and "offset_msec", which are time offset in minutes and
+        milliseconds from the start of the *first session*, respectively.
+
+AUTHOR
+    Chia-liang Kao <clkao@clkao.org>
+
+LICENSE
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+SEE ALSO
