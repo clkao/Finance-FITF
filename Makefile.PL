@@ -4,6 +4,7 @@ name 'Finance-FITF';
 all_from 'lib/Finance/FITF.pm';
 readme_from 'lib/Finance/FITF.pm';
 build_requires 'Test::More' => 0.88;
+requires 'Parse::Binary::FixedFormat';
 requires 'Class::Accessor';
 requires 'Sub::Exporter';
 

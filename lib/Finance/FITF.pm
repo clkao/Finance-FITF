@@ -113,7 +113,7 @@ sub new {
 sub new_from_file {
     my $class = shift;
     my $file = shift;
-    open my $fh, '<:raw', $file or die $!;
+    open my $fh, '<:raw', $file or die "$file: $!";
 
     sysread $fh, my $buf, length( $header_fmt->format({}) );
 
@@ -150,12 +150,25 @@ sub run_ticks {
     my $cnt = $end - $start + 1;
     seek $self->{fh}, $start * $self->tick_sz + $self->nbars * $self->bar_sz + $self->header_sz, 0;
 
-    for (1..$cnt) {
-        my $buf;
-        read $self->{fh}, $buf, $self->tick_sz;
-        my $tick = $self->tick_fmt->unformat($buf);
-        my $time = $self->{date_start} + $tick->{offset_min}*60 + $tick->{offset_msec}/1000;
-        $cb->($time, $tick->{price} / $self->{header}{divisor}, $tick->{volume});
+    $self->_fast_unformat($self->tick_fmt, $self->tick_sz, $cnt,
+                          sub {
+                              my $tick = shift;
+                              my $time = $self->{date_start} + $tick->{offset_min}*60 + $tick->{offset_msec}/1000;
+                              $cb->($time, $tick->{price} / $self->{header}{divisor}, $tick->{volume});
+                          });
+}
+
+sub _fast_unformat {
+    my ($self, $fmt, $sz, $n, $cb) = @_;
+
+    my $buf;
+    read $self->{fh}, $buf, $sz * $n;
+
+    my @records = unpack('('.$fmt->_format.')*', $buf);
+    while (my @r = splice(@records, 0, scalar @{$fmt->{Names}})) {
+        my $record = {};
+        @{$record}{@{$fmt->{Names}}} = @r;
+        $cb->($record);
     }
 }
 
