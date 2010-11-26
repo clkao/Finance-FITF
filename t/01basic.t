@@ -12,7 +12,7 @@ my $writer = Finance::FITF->new_writer(
         date => '20101119',
         time_zone => 'Asia/Taipei',
         bar_seconds => 10,
-#        format => 0x03, #FITF_TICK_USHORT | FITF_BAR_USHORT
+        format => FITF_TICK_USHORT | FITF_BAR_USHORT,
     },
 );
 

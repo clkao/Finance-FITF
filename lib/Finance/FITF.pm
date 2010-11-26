@@ -6,6 +6,15 @@ our $VERSION = '0.29';
 use Finance::FITF::Writer;
 use Class::Accessor "antlers";
 
+use Sub::Exporter -setup => {
+    groups  => {
+        default    => [ qw(FITF_TICK_NONE FITF_TICK_USHORT FITF_TICK_ULONG
+                           FITF_BAR_USHORT FITF_BAR_ULONG)],
+    },
+    exports => [qw(FITF_TICK_NONE FITF_TICK_USHORT FITF_TICK_ULONG
+                   FITF_BAR_USHORT FITF_BAR_ULONG)],
+};
+
 use constant FITF_TICK_FMT    => 0x000f;
 use constant FITF_TICK_NONE   => 0x0000;
 use constant FITF_TICK_USHORT => 0x0001;
