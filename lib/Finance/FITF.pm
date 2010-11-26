@@ -6,12 +6,16 @@ our $VERSION = '0.29';
 use Finance::FITF::Writer;
 use Class::Accessor "antlers";
 
-use constant FITF_TICK_USHORT => 0x01;
-use constant FITF_TICK_ULONG  => 0x00;
-use constant FITF_BAR_USHORT  => 0x02;
-use constant FITF_BAR_ULONG   => 0x00;
+use constant FITF_TICK_FMT    => 0x000f;
+use constant FITF_TICK_NONE   => 0x0000;
+use constant FITF_TICK_USHORT => 0x0001;
+use constant FITF_TICK_ULONG  => 0x0002;
 
-use constant FITF_VERSION => 0x01;
+use constant FITF_BAR_FMT     => 0x00f0;
+use constant FITF_BAR_USHORT  => 0x0010;
+use constant FITF_BAR_ULONG   => 0x0020;
+
+use constant FITF_VERSION => 0x02;
 use constant FITF_MAGIC => "\x1f\xf1";
 use Parse::Binary::FixedFormat;
 
@@ -125,8 +129,8 @@ sub new_from_file {
 
     my $self = $class->new({
         header_fmt => $header_fmt,
-        bar_fmt    => $header->{format} & FITF_BAR_USHORT  ? $bar_s  : $bar_l,
-        tick_fmt   => $header->{format} & FITF_TICK_USHORT ? $tick_s : $tick_l,
+        bar_fmt    => ($header->{format} & FITF_BAR_FMT) == FITF_BAR_USHORT  ? $bar_s  : $bar_l,
+        tick_fmt   => ($header->{format} & FITF_TICK_FMT) == FITF_TICK_USHORT ? $tick_s : $tick_l,
         fh => $fh,
         header => $header });
 
@@ -189,8 +193,8 @@ sub new_writer {
 
     Finance::FITF::Writer->new({
         header_fmt => $header_fmt,
-        bar_fmt    => $header->{format} & FITF_BAR_USHORT  ? $bar_s  : $bar_l,
-        tick_fmt   => $header->{format} & FITF_TICK_USHORT ? $tick_s : $tick_l,
+        bar_fmt    => ($header->{format} & FITF_BAR_FMT) == FITF_BAR_USHORT  ? $bar_s  : $bar_l,
+        tick_fmt   => ($header->{format} & FITF_TICK_FMT) == FITF_TICK_USHORT ? $tick_s : $tick_l,
         %args,
         header => $header});
 }
