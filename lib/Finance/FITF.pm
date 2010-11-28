@@ -146,7 +146,7 @@ sub new_from_file {
     return $self;
 }
 
-sub bar_at {
+sub bar_idx {
     my ($self, $timestamp) = @_;
     my $session_idx = 0;
     my $h = $self->header;
@@ -155,14 +155,21 @@ sub bar_at {
         $offset += ($h->{end}[$session_idx] - $h->{start}[$session_idx]) / $h->{bar_seconds};
         ++$session_idx;
     }
-
+    return if $session_idx == 3;
     my $nth = ($timestamp - $h->{start}[$session_idx]) / $h->{bar_seconds} + $offset - 1;
+}
+
+sub bar_at {
+    my ($self, $timestamp) = @_;
+    my $nth = $self->bar_idx($timestamp);
+    return unless defined $nth;
+
     seek $self->{fh}, $nth * $self->bar_sz + $self->header_sz, 0;
 
     my $buf;
     sysread $self->{fh}, $buf, $self->bar_sz;
     my $bar = $self->bar_fmt->unformat($buf);
-    $bar->{$_} /= $h->{divisor} for qw(open high low close);
+    $bar->{$_} /= $self->{header}{divisor} for qw(open high low close);
     return $bar;
 }
 
@@ -347,6 +354,10 @@ Returns L<Finance::FITF> object for the given FITF-formatted file at C<$fname>.
 Returns the bar hash located at C<$ts>.  The bar represents trades
 within the C<bar_seconds> before and excluding the epoch timestamp
 C<$ts>.
+
+=item $self->bar_idx($ts)
+
+Returns the index of the bar located C<$ts>.
 
 =item $self->run_ticks($start, $end, $cb)
 
