@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Class::Accessor "antlers";
 use DateTime;
+use Carp qw(croak);
 
 extends 'Finance::FITF';
 
@@ -14,7 +15,6 @@ has ticks_written => (is => "rw", isa => "Int");
 has last_index => (is => "rw", isa => "Int");
 
 has bar_index => (is => "rw", isa => "Int");
-
 
 sub new {
     my $class = shift;
@@ -34,6 +34,9 @@ sub add_session {
     my $date_start = $self->{date_start};
 
     $self->{bar_ts} ||= [];
+    if (scalar @{$self->header->{start}} >= 3) {
+        croak "FITF supports up to 3 sessions only.";
+    }
     push @{$self->header->{start}}, $date_start + $start_offset;
     push @{$self->header->{end}}, $date_start + $end_offset;
     push @{$self->{bar_ts}},
@@ -43,6 +46,18 @@ sub add_session {
 }
 
 sub _flush {
+    my $self = shift;
+    my $ts   = shift;
+    my $frame = shift;
+    my $pos = sysseek($self->{fh}, 0, 1);
+    seek $self->{fh}, $self->header_sz + ($self->{bars_written}++) * $self->bar_sz, 0;
+    syswrite $self->{fh}, $self->bar_fmt->format({ %$frame, index => $self->{last_index}});
+
+    seek $self->{fh}, $pos, 0;
+    $self->last_index( $self->ticks_written );
+}
+
+sub push_bar {
     my $self = shift;
     my $ts   = shift;
     my $frame = shift;

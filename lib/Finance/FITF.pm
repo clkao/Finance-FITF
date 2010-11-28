@@ -148,13 +148,21 @@ sub new_from_file {
 
 sub bar_at {
     my ($self, $timestamp) = @_;
-    my $nth = ($timestamp - $self->header->{start}[0]) / $self->header->{bar_seconds} - 1;
+    my $session_idx = 0;
+    my $h = $self->header;
+    my $offset = 0;
+    while ($session_idx < 3 && $timestamp > $h->{end}[$session_idx]) {
+        $offset += ($h->{end}[$session_idx] - $h->{start}[$session_idx]) / $h->{bar_seconds};
+        ++$session_idx;
+    }
+
+    my $nth = ($timestamp - $h->{start}[$session_idx]) / $h->{bar_seconds} + $offset - 1;
     seek $self->{fh}, $nth * $self->bar_sz + $self->header_sz, 0;
 
     my $buf;
     sysread $self->{fh}, $buf, $self->bar_sz;
     my $bar = $self->bar_fmt->unformat($buf);
-    $bar->{$_} /= $self->{header}{divisor} for qw(open high low close);
+    $bar->{$_} /= $h->{divisor} for qw(open high low close);
     return $bar;
 }
 
