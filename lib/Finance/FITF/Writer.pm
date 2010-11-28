@@ -165,6 +165,31 @@ Finance::FITF::Writer - Fast Intraday Transaction Format Writer
 
 Finance::FITF::Writer is a helper class to create FITF-formatted files.
 
+=head2 METHODS
+
+=over
+
+=item Finance::FITF::Writer->new( fh => $fh, header => { .... } )
+
+=item $self->add_session($start, $end)
+
+Add a session to the file.  C<$start> and C<$end> are seconds relative
+to midnight of the trading day defined by the header.
+
+=item $self->push_price( $timestamp, $price, $volume );
+
+Add a trade transaction record.
+
+=item $self->push_bar( $timestamp, $price, $volume );
+
+You should not call this unless you are writing a bar-only file.
+
+=item $self->end
+
+Call C<end> when you are done.
+
+=back
+
 =head1 AUTHOR
 
 Chia-liang Kao E<lt>clkao@clkao.orgE<gt>

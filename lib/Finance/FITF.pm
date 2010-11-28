@@ -260,6 +260,56 @@ The FITF format consists 3 parts:
 The header defines the name, date, and sessions of the transactions
 that the file is describing.
 
+The fields and packing format of FITF header are:
+
+=over
+
+=item magic a2
+
+magic for FITF files should be C<"\x1f\xf1">.
+
+=item version n
+
+FITF format version
+
+=item date a8
+
+YYYYMMDD string of the trading day
+
+=item time_zone Z31
+
+Long time zone name.  For example: America/Chicago, Asia/Taipei.
+
+=item start N:3
+
+start timestamp of each session
+
+=item end N:3
+
+end timestamp of each session
+
+=item records N
+
+number of tick records
+
+=item bar_seconds n
+
+number of seconds per bar
+
+=item format N
+
+flags for bar and tick sizing and format
+
+=item divisor N
+
+the number that the all prices in this file should be divided by
+
+=item name Z47
+
+free form name
+
+=back
+
 =item bars
 
 The number of bars in the file is determined by the total seconds in
@@ -283,6 +333,41 @@ C<offset_min> and C<offset_msec>, which are time offset in minutes and
 milliseconds from the start of the I<first session>, respectively.
 
 =back
+
+=head2 METHODS
+
+=over
+
+=item Finance::FITF->new_from_file($fname)
+
+Returns L<Finance::FITF> object for the given FITF-formatted file at C<$fname>.
+
+=item $self->bar_at($ts)
+
+Returns the bar hash located at C<$ts>.  The bar represents trades
+within the C<bar_seconds> before and excluding the epoch timestamp
+C<$ts>.
+
+=item $self->run_ticks($start, $end, $cb)
+
+Iterate the ticks indexed by C<$start> and C<$end> for the callback
+C<$cb>.  the callback takes timestamp, price, and volume as argument.
+
+=back
+
+=head2 ATTRIBUTES
+
+=over
+
+=item header
+
+=item fh
+
+=item nbars
+
+=back
+
+=cut
 
 =head1 AUTHOR
 

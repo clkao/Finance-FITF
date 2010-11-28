@@ -10,3 +10,7 @@ liang
 Kao
 FITF
 intraday
+timestamp
+YYYYMMDD
+fh
+nbars
