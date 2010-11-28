@@ -63,6 +63,17 @@ is_deeply $bar, { 'high' => 8204,
                   'volume' => 5,
               };
 
+my @res;
+$reader->run_ticks($bar->{index}, $bar->{index}+$bar->{ticks},
+                   sub {
+                       my ($time, $price, $vol) = @_;
+                       push @res, [$time, $price, $vol];
+                   });
+
+is_deeply \@res, [[1290127510, 8204, 1],
+                  [1290127511, 8203, 4],
+                  [1290127529, 8205, 2]];
+
 $bar = $reader->bar_at(1290127550);
 is_deeply $bar, { 'high' => 8206,
                   'low' => 8206,
