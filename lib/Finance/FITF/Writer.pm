@@ -45,18 +45,6 @@ sub add_session {
     $self->nbars( scalar @{$self->{bar_ts}} );
 }
 
-sub _flush {
-    my $self = shift;
-    my $ts   = shift;
-    my $frame = shift;
-    my $pos = sysseek($self->{fh}, 0, 1);
-    seek $self->{fh}, $self->header_sz + ($self->{bars_written}++) * $self->bar_sz, 0;
-    syswrite $self->{fh}, $self->bar_fmt->format({ %$frame, index => $self->{last_index}});
-
-    seek $self->{fh}, $pos, 0;
-    $self->last_index( $self->ticks_written );
-}
-
 sub push_bar {
     my $self = shift;
     my $ts   = shift;
@@ -80,7 +68,7 @@ sub push_price {
     my $cp = $self->current_prices;
     my $last = $cp && $cp->{close} || 0;
     while ($ts >= $self->{bar_ts}[$self->{bar_index}]) {
-        $self->_flush($self->{bar_ts}[$self->{bar_index}++],
+        $self->push_bar($self->{bar_ts}[$self->{bar_index}++],
                       $cp || { open => $last, high => $last, low => $last, close => $last });
         $cp = undef;
     }
@@ -114,7 +102,7 @@ sub end {
     my $cp = $self->current_prices;
     my $last = $cp && $cp->{close} || 0;
     while ($self->{bar_index} < $self->{nbars}) {
-        $self->_flush($self->{bar_ts}[$self->{bar_index}++],
+        $self->push_bar($self->{bar_ts}[$self->{bar_index}++],
                       $cp || { open => $last, high => $last, low => $last, close => $last });
         $cp = undef;
     }
