@@ -186,6 +186,14 @@ sub run_ticks {
                           });
 }
 
+sub run_bars {
+    my ($self, $start, $end, $cb) = @_;
+    my $cnt = $end - $start + 1;
+    seek $self->{fh}, $start * $self->bar_sz + $self->header_sz, 0;
+
+    $self->_fast_unformat($self->bar_fmt, $self->bar_sz, $cnt, $cb);
+}
+
 sub _fast_unformat {
     my ($self, $fmt, $sz, $n, $cb) = @_;
 
@@ -197,6 +205,44 @@ sub _fast_unformat {
         my $record = {};
         @{$record}{@{$fmt->{Names}}} = @r;
         $cb->($record);
+    }
+}
+
+sub run_bars_as {
+    my ($self, $bar_seconds, $offset, $cb) = @_;
+    my @ts;
+    my $h = $self->header;
+    for (my $i = $h->{start}[0]; $i < $h->{end}[0]; $i += $bar_seconds) {
+        push @ts, $i + $bar_seconds;
+    }
+
+    my $i = 0;
+    my @fast = @{$self->{bar_ts}};
+    my $current_bar;
+    $self->run_bars(0, $self->nbars-1,
+                    sub {
+                        my $bar = shift;
+                        my $ts = $self->{bar_ts}[$i++];
+                        if ($current_bar) {
+                            $current_bar->{high} = $bar->{high}
+                                if $bar->{high} > $current_bar->{high};
+                            $current_bar->{low} = $bar->{low}
+                                if $bar->{low} < $current_bar->{low};
+
+                            $current_bar->{close} = $bar->{close};
+                            $current_bar->{volume} += $bar->{volume};
+                            $current_bar->{ticks} += $bar->{ticks};
+                        }
+                        else {
+                            $current_bar = $bar;
+                        }
+                        if ($ts == $ts[0]) {
+                            $cb->(shift @ts, $current_bar);
+                            undef $current_bar;
+                        }
+                    });
+    if (@ts) {
+        $cb->(shift @ts, $current_bar);
     }
 }
 
