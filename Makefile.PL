@@ -3,10 +3,15 @@ use inc::Module::Install;
 name 'Finance-FITF';
 all_from 'lib/Finance/FITF.pm';
 readme_from 'lib/Finance/FITF.pm';
+
 build_requires 'Test::More' => 0.88;
+requires 'Class::Accessor'  => '0.34';
+requires 'DateTime';
+requires 'DateTime::Format::Strptime';
 requires 'Parse::Binary::FixedFormat';
-requires 'Class::Accessor';
 requires 'Sub::Exporter';
+
+install_script 'bin/fitf-dump';
 
 auto_include_deps;
 author_tests('xt');

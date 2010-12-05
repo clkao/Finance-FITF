@@ -28,6 +28,41 @@ FORMAT
         The header defines the name, date, and sessions of the transactions
         that the file is describing.
 
+        The fields and packing format of FITF header are:
+
+        magic a2
+            magic for FITF files should be "\x1f\xf1".
+
+        version n
+            FITF format version
+
+        date a8
+            YYYYMMDD string of the trading day
+
+        time_zone Z31
+            Long time zone name. For example: America/Chicago, Asia/Taipei.
+
+        start N:3
+            start timestamp of each session
+
+        end N:3
+            end timestamp of each session
+
+        records N
+            number of tick records
+
+        bar_seconds n
+            number of seconds per bar
+
+        format N
+            flags for bar and tick sizing and format
+
+        divisor N
+            the number that the all prices in this file should be divided by
+
+        name Z47
+            free form name
+
     bars
         The number of bars in the file is determined by the total seconds in
         the sessions defined in the header, divided by "bar_seconds" defined
@@ -47,6 +82,28 @@ FORMAT
         transaction. The time of the transaction is determined by
         "offset_min" and "offset_msec", which are time offset in minutes and
         milliseconds from the start of the *first session*, respectively.
+
+  METHODS
+    Finance::FITF->new_from_file($fname)
+        Returns Finance::FITF object for the given FITF-formatted file at
+        $fname.
+
+    $self->bar_at($ts)
+        Returns the bar hash located at $ts. The bar represents trades
+        within the "bar_seconds" before and excluding the epoch timestamp
+        $ts.
+
+    $self->bar_idx($ts)
+        Returns the index of the bar located $ts.
+
+    $self->run_ticks($start, $end, $cb)
+        Iterate the ticks indexed by $start and $end for the callback $cb.
+        the callback takes timestamp, price, and volume as argument.
+
+  ATTRIBUTES
+    header
+    fh
+    nbars
 
 AUTHOR
     Chia-liang Kao <clkao@clkao.org>
