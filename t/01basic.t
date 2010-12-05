@@ -45,7 +45,7 @@ is $reader->{bar_ts}[0], 1290127510;
 
 my $bar = $reader->bar_at(1290127510);
 is_deeply $bar, { 'high' => 8205,
-                  'low' => 8205,
+                  'low' => 8200,
                   'open' => 8200,
                   'index' => 0,
                   'close' => 8203,
@@ -55,7 +55,7 @@ is_deeply $bar, { 'high' => 8205,
 
 $bar = $reader->bar_at(1290127520);
 is_deeply $bar, { 'high' => 8204,
-                  'low' => 8204,
+                  'low' => 8203,
                   'open' => 8204,
                   'index' => 3,
                   'close' => 8203,

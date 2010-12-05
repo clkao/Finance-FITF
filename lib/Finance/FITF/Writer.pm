@@ -77,7 +77,7 @@ sub push_price {
         ++$cp->{ticks}; $cp->{volume} += $volume;
         $cp->{close} = $price;
         $cp->{high}  = $price if $price > $cp->{high};
-        $cp->{low}   = $price if $price > $cp->{low};
+        $cp->{low}   = $price if $price < $cp->{low};
     }
     else {
         $self->current_prices({ open => $price, close => $price,
