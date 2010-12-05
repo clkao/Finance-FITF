@@ -8,11 +8,11 @@ use Class::Accessor "antlers";
 
 use Sub::Exporter -setup => {
     groups  => {
-        default    => [ qw(FITF_TICK_NONE FITF_TICK_USHORT FITF_TICK_ULONG
-                           FITF_BAR_USHORT FITF_BAR_ULONG)],
+        default    => [ qw(FITF_TICK_FMT FITF_TICK_NONE  FITF_TICK_USHORT FITF_TICK_ULONG
+                           FITF_BAR_FMT  FITF_BAR_USHORT FITF_BAR_ULONG)],
     },
-    exports => [qw(FITF_TICK_NONE FITF_TICK_USHORT FITF_TICK_ULONG
-                   FITF_BAR_USHORT FITF_BAR_ULONG)],
+    exports => [qw(FITF_TICK_FMT FITF_TICK_NONE FITF_TICK_USHORT FITF_TICK_ULONG
+                   FITF_BAR_FMT FITF_BAR_USHORT FITF_BAR_ULONG)],
 };
 
 use constant FITF_TICK_FMT    => 0x000f;
