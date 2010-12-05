@@ -91,6 +91,7 @@ has bar_sz     => ( is => "rw", isa => "Int");
 has tick_fmt   => ( is => "ro", isa => "Parse::Binary::FixedFormat" );
 has tick_sz    => ( is => "rw", isa => "Int");
 
+has day        => (is => "rw", isa => "DateTime");
 has date_start => (is => "rw", isa => "Int");
 
 has nbars => (is => "rw", isa => "Int");
@@ -103,11 +104,11 @@ sub new {
     $self->bar_sz(    length( $self->bar_fmt->format({}) ) );
     $self->tick_sz(   length( $self->tick_fmt->format({}) ) );
     my ($y, $m, $d) = $self->header->{date} =~ m/(\d\d\d\d)(\d\d)(\d\d)/;
-    $self->date_start( DateTime->new(time_zone => $self->header->{time_zone},
-                                     year => $y, month => $m, day => $d)->epoch );
+    $self->day(DateTime->new(time_zone => $self->header->{time_zone},
+                             year => $y, month => $m, day => $d));
+    $self->date_start( $self->day->epoch );
 
     $self->{bar_ts} ||= [];
-    my $date_start = $self->date_start;
 
     for (0..2) {
         my ($start, $end) = ($self->header->{start}[$_], $self->header->{end}[$_]);
@@ -244,6 +245,22 @@ sub run_bars_as {
     if (@ts) {
         $cb->(shift @ts, $current_bar);
     }
+}
+
+sub format_timestamp {
+    my ($self, $ts) = @_;
+    my $hms = $ts - $self->{date_start};
+    my $d = $self->day;
+
+    if ($hms < 0) {
+        $d = $d->clone->subtract(days => 1);
+        $hms += 86400;
+    }
+    $hms = sprintf('%02d:%02d:%02d',
+                   int($hms / 60 / 60),
+                   int(($hms % 3600)/60),
+                   ($hms % 60));
+    return $self->day->ymd. ' '.$hms;
 }
 
 sub new_writer {
