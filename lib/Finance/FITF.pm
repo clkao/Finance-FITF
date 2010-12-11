@@ -229,18 +229,20 @@ sub run_bars_as {
                     sub {
                         my $bar = shift;
                         my $ts = $self->{bar_ts}[$i++];
-                        if ($current_bar) {
-                            $current_bar->{high} = $bar->{high}
-                                if $bar->{high} > $current_bar->{high};
-                            $current_bar->{low} = $bar->{low}
-                                if $bar->{low} < $current_bar->{low};
+                        if ($bar->{volume}) {
+                            if ($current_bar) {
+                                $current_bar->{high} = $bar->{high}
+                                    if $bar->{high} > $current_bar->{high};
+                                $current_bar->{low} = $bar->{low}
+                                    if $bar->{low} < $current_bar->{low};
 
-                            $current_bar->{close} = $bar->{close};
-                            $current_bar->{volume} += $bar->{volume};
-                            $current_bar->{ticks} += $bar->{ticks};
-                        }
-                        else {
-                            $current_bar = $bar;
+                                $current_bar->{close} = $bar->{close};
+                                $current_bar->{volume} += $bar->{volume};
+                                $current_bar->{ticks} += $bar->{ticks};
+                            }
+                            else {
+                                $current_bar = $bar;
+                            }
                         }
                         if ($ts == $ts[0]) {
                             $cb->(shift @ts, $current_bar);
