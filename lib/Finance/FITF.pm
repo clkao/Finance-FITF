@@ -213,8 +213,13 @@ sub run_bars_as {
     my ($self, $bar_seconds, $offset, $cb) = @_;
     my @ts;
     my $h = $self->header;
-    for (my $i = $h->{start}[0]; $i < $h->{end}[0]; $i += $bar_seconds) {
-        push @ts, $i + $bar_seconds;
+    for (0..2) {
+        my ($start, $end) = ($self->header->{start}[$_], $self->header->{end}[$_]);
+        last unless $start && $end;
+
+        push @ts,
+            map { $start + $_ * $bar_seconds }
+                (1..($end - $start) / $bar_seconds);
     }
 
     my $i = 0;
