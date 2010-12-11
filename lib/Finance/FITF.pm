@@ -225,6 +225,7 @@ sub run_bars_as {
     my $i = 0;
     my @fast = @{$self->{bar_ts}};
     my $current_bar;
+    my $last_price;
     $self->run_bars(0, $self->nbars-1,
                     sub {
                         my $bar = shift;
@@ -245,7 +246,15 @@ sub run_bars_as {
                             }
                         }
                         if ($ts == $ts[0]) {
+                            $current_bar ||= { open => $last_price,
+                                               high => $last_price,
+                                               low  => $last_price,
+                                               close => $last_price,
+                                               volume => 0,
+                                               ticks => 0,
+                                           };
                             $cb->(shift @ts, $current_bar);
+                            $last_price = $current_bar->{close};
                             undef $current_bar;
                         }
                     });
