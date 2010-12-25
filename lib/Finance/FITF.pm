@@ -2,7 +2,7 @@ package Finance::FITF;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.29';
+our $VERSION = '0.30';
 use Finance::FITF::Writer;
 use POSIX qw(ceil);
 BEGIN {

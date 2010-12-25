@@ -100,6 +100,18 @@ FORMAT
         Iterate the ticks indexed by $start and $end for the callback $cb.
         the callback takes timestamp, price, and volume as argument.
 
+    $self->run_bars($start, $end, $cb)
+        Iterate the bars indexed by $start and $end for the callback $cb.
+        the callback takes the bar hash.
+
+    $self->run_bars_as($bar_seconds, $offset, $cb)
+        Aggregate bars into $bar_seconds-bars for the callback $cb. The
+        callback takes timestamp of the bar and the bar hash.
+
+    $self->format_timestamp($ts)
+        A faster helper to format timestamp as "%F %T" in the
+        "$self-"header->{time_zone}>.
+
   ATTRIBUTES
     header
     fh

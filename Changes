@@ -1,4 +1,8 @@
 Revision history for Perl extension Finance::FITF
 
+0.30  Sat Dec 25 20:50:01 CST 2010
+        - Use Class::XSAccessor if possbile.
+        - run_bars and run_bars_as helpers.
+
 0.29  Sun Dec  5 14:47:14 CST 2010
         - original version
