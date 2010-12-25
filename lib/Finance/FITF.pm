@@ -4,6 +4,7 @@ use strict;
 use 5.008_001;
 our $VERSION = '0.29';
 use Finance::FITF::Writer;
+use POSIX qw(ceil);
 BEGIN {
     eval "use Class::XSAccessor::Compat 'antlers'; 1" or
     eval "use Class::Accessor::Fast 'antlers'; 1" or die $@;
@@ -221,8 +222,9 @@ sub run_bars_as {
         last unless $start && $end;
 
         push @ts,
-            map { $start + $_ * $bar_seconds }
-                (1..($end - $start) / $bar_seconds);
+            map { my $t = $start + $_ * $bar_seconds;
+                  $t < $end ? $t : $end;
+              } (1..ceil(($end - $start) / $bar_seconds));
     }
 
     my $i = 0;

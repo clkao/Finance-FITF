@@ -55,4 +55,31 @@ for (1..54) {
     is $b->{open}, 20000+$_;
 }
 
+my $i = 1;
+$reader->run_bars(0, 53,
+                  sub {
+                      is $_[0]{open}, 20000 + $i++
+                  });
+
+my @res;
+$reader->run_bars_as(3600, 0,
+                  sub {
+                      my ($ts, $b) = @_;
+                      push @res, [ $ts, $b ];
+                  });
+is_deeply [map {$reader->format_timestamp($_->[0])} @res],
+    ['2010-11-19 10:45:00',
+     '2010-11-19 11:45:00',
+     '2010-11-19 12:30:00',
+     '2010-11-19 15:30:00',
+     '2010-11-19 16:15:00'];
+
+is_deeply [map {$_->[1]{open}} @res],
+    [20001, 20013, 20025, 20034, 20046];
+
+is_deeply [map {$_->[1]{close}} @res],
+    [20012, 20024, 20033, 20045, 20054];
+
+
+#warn Dumper(\@res) ; use Data::Dumper;
 done_testing;
