@@ -135,7 +135,8 @@ Finance::FITF::Writer - Fast Intraday Transaction Format Writer
 =head1 SYNOPSIS
 
   use Finance::FITF;
-  Finance::FITF::Writer->new(
+  my $fh;
+  my $writer = Finance::FITF::Writer->new(
     fh => $fh,
     header => {
         name => 'XTAF.TX',
