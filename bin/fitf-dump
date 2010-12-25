@@ -116,3 +116,34 @@ sub process_file {
     }
 }
 
+__END__
+
+=encoding utf-8
+
+=for stopwords
+
+=head1 NAME
+
+fitf-dump - utlity for dumping fitf files
+
+=head1 SYNOPSIS
+
+  # show header
+  fitf-dump file.fitf
+
+  # dump all ticks
+  fitf-dump --tick --all file.fitf
+
+  # dump all bars as 5min bars
+  fitf-dump --bar --second 300 file.fitf
+
+=head1 AUTHOR
+
+Chia-liang Kao E<lt>clkao@clkao.orgE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
