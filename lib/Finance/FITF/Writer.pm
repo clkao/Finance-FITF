@@ -1,7 +1,10 @@
 package Finance::FITF::Writer;
 use strict;
 use warnings;
-use Class::Accessor "antlers";
+BEGIN {
+    eval "use Class::XSAccessor::Compat 'antlers'; 1" or
+    eval "use Class::Accessor::Fast 'antlers'; 1" or die $@;
+}
 use DateTime;
 use Carp qw(croak);
 

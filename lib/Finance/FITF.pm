@@ -4,7 +4,10 @@ use strict;
 use 5.008_001;
 our $VERSION = '0.29';
 use Finance::FITF::Writer;
-use Class::Accessor "antlers";
+BEGIN {
+    eval "use Class::XSAccessor::Compat 'antlers'; 1" or
+    eval "use Class::Accessor::Fast 'antlers'; 1" or die $@;
+}
 
 use Sub::Exporter -setup => {
     groups  => {

@@ -11,6 +11,8 @@ requires 'DateTime::Format::Strptime';
 requires 'Parse::Binary::FixedFormat';
 requires 'Sub::Exporter';
 
+recommends 'Class::XSAccessor::Compat';
+
 install_script 'bin/fitf-dump';
 
 auto_include_deps;
