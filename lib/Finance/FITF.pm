@@ -448,6 +448,21 @@ Returns the index of the bar located C<$ts>.
 Iterate the ticks indexed by C<$start> and C<$end> for the callback
 C<$cb>.  the callback takes timestamp, price, and volume as argument.
 
+=item $self->run_bars($start, $end, $cb)
+
+Iterate the bars indexed by C<$start> and C<$end> for the callback
+C<$cb>.  the callback takes the bar hash.
+
+=item $self->run_bars_as($bar_seconds, $offset, $cb)
+
+Aggregate bars into C<$bar_seconds>-bars for the callback C<$cb>.  The
+callback takes timestamp of the bar and the bar hash.
+
+=item $self->format_timestamp($ts)
+
+A faster helper to format timestamp as C<"%F %T"> in the
+C<$self->header->{time_zone}>.
+
 =back
 
 =head2 ATTRIBUTES
