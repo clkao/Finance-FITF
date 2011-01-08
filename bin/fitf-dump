@@ -8,7 +8,7 @@ use YAML::Syck;
 use DateTime::Format::Strptime;
 use DateTime::Format::ISO8601;
 
-my ($show_bar, $bar_seconds, $show_tick, $start, $header, $all);
+my ($show_bar, $bar_seconds, $offset_seconds, $show_tick, $start, $header, $all);
 my $n = 10;
 my $format = 'OHLCVD';
 my $date_format = '%F %T';
@@ -24,6 +24,7 @@ my %format_map = ( O => 'open',
 GetOptions("header"  => \$header,
            "bar"     => \$show_bar,
            "seconds=i" => \$bar_seconds,
+           "offset=i"  => \$offset_seconds,
            "tick"    => \$show_tick,
            "all"     => \$all,
            "format"  => \$format,
@@ -105,7 +106,7 @@ sub process_file {
     };
 
     if ($bar_seconds) {
-        $data->run_bars_as( $bar_seconds, 0 , $cb);
+        $data->run_bars_as( $bar_seconds, $offset_seconds || 0 , $cb);
     }
     else {
         my $start = $data->bar_idx($start_at + $h->{bar_seconds});
