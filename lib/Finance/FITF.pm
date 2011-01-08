@@ -229,7 +229,6 @@ sub run_bars_as {
     }
 
     my $i = 0;
-    my @fast = @{$self->{bar_ts}};
     my $current_bar;
     my $last_price;
     $self->run_bars(0, $self->nbars-1,
