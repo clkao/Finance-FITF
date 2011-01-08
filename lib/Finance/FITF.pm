@@ -281,7 +281,7 @@ sub format_timestamp {
                    int($hms / 60 / 60),
                    int(($hms % 3600)/60),
                    ($hms % 60));
-    return $self->day->ymd. ' '.$hms;
+    return $d->ymd. ' '.$hms;
 }
 
 sub new_writer {
