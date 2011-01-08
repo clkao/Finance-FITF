@@ -90,10 +90,12 @@ sub process_file {
             my @res;
             for (split //, $format) {
                 my $field = $format_map{$_};
-                push @res, $field eq 'date' ? $strp->format_datetime(
-                    DateTime->from_epoch(epoch => $ts,
-                                         time_zone => $h->{time_zone}))
-                    : $bar->{$field};
+                my $d = $date_format eq '%F %T'
+                    ? $data->format_timestamp($ts)
+                    : $strp->format_datetime(
+                        DateTime->from_epoch(epoch => $ts,
+                                             time_zone => $h->{time_zone}));
+                push @res, $field eq 'date' ? $d : $bar->{$field};
             }
             print join("\t", @res).$/;
         }
