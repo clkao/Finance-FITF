@@ -221,6 +221,7 @@ sub run_bars_as {
         my ($start, $end) = ($self->header->{start}[$_], $self->header->{end}[$_]);
         last unless $start && $end;
 
+        $start -= $offset;
         push @ts,
             map { my $t = $start + $_ * $bar_seconds;
                   $t < $end ? $t : $end;
