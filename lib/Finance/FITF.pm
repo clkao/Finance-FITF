@@ -327,10 +327,10 @@ Finance::FITF - Fast Intraday Transaction Format
   use Finance::FITF;
 
   my $day = Finance::FITF->new_from_file('XTAF.TX-2010-11-19.fitf');
-  $day->header->{start}[0]; # start of the first session
-  $day->header->{end}[0];   # end of the first session
+  warn $day->header->{start}[0]; # start of the first session
+  warn $day->header->{end}[0];   # end of the first session
 
-  $day->header->{bar_seconds}; # number of seconds per bar
+  warn $day->header->{bar_seconds}; # number of seconds per bar
 
   # last bar in the file. you can get open/high/low/close/volume from $bar
   my $bar = $day->bar_at($day->header->{end}[0]);

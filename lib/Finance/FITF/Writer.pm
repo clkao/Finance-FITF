@@ -149,7 +149,7 @@ Finance::FITF::Writer - Fast Intraday Transaction Format Writer
   # add session: from 08:45 to 13:45
   $writer->add_session( 525 * 60, 825 * 60 );
 
-  $writer->push_price( $timestamp, $price, $volume);
+  # $writer->push_price( $timestamp, $price, $volume);
   # ...
   $writer->end;
 
