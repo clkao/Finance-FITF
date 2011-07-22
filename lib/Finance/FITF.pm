@@ -277,6 +277,10 @@ sub format_timestamp {
         $d = $d->clone->subtract(days => 1);
         $hms += 86400;
     }
+    elsif ($hms >= 86400) {
+        $d = $d->clone->add(days => 1);
+        $hms -= 86400;
+    }
     $hms = sprintf('%02d:%02d:%02d',
                    int($hms / 60 / 60),
                    int(($hms % 3600)/60),
