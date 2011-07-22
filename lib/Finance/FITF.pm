@@ -215,6 +215,7 @@ sub _fast_unformat {
 
 sub run_bars_as {
     my ($self, $bar_seconds, $offset, $cb) = @_;
+    Carp::confess unless $bar_seconds;
     my @ts;
     my $h = $self->header;
     for (0..2) {
