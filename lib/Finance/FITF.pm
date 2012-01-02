@@ -131,7 +131,12 @@ sub new {
 sub new_from_file {
     my $class = shift;
     my $file = shift;
-    open my $fh, '<:raw', $file or die "$file: $!";
+    my $layers = ":raw";
+    if ($file =~ m/\.bz2$/) {
+        require PerlIO::via::Bzip2;
+        $layers .= ':via(Bzip2)';
+    }
+    open my $fh, "<$layers", $file or die "$file: $!";
 
     sysread $fh, my $buf, length( $header_fmt->format({}) );
 
